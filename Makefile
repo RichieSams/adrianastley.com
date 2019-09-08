@@ -1,8 +1,7 @@
+.PHONY: build serve
 
+build:
+	./sitegen.exe build -c site_gen_config.yaml
 
-up:
-	docker-compose up
-
-down:
-	docker-compose down
-
+serve:
+	./sitegen.exe serve -c site_gen_config.yaml -p 3456
