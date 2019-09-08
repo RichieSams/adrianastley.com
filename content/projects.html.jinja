@@ -2,5 +2,54 @@
 
 {% block content %}
 <section class="container">
+    <h3 class="py-3">Personal Projects</h3>
+    <div class="row pb-4">
+        <div class="col-md-5">
+            <img class="d-flex align-items-center justify-content-center img-fluid" src="/static/images/stanford_dragon_jade.png" width="900px"/>
+        </div>
+        <div class="col-md-7">
+            <h4 class="mb-2"><a href="https://github.com/RichieSams/lantern">Lantern</a></h4>
+            <p>
+                Lantern is a physically-based path tracer written in C++11. 
+                I created it in order to learn light transport algorithms, and physically-based rendering.
+                It is a forward path tracer with Next Event Estimation and Multiple Importance Sampling.
+                It also supports participating media via brute force path sampling.
+            </p>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="col-md-5">
+            <img class="d-flex align-items-center justify-content-center img-fluid" src="/static/images/profile_flamegraph.png" width="900px"/>
+        </div>
+        <div class="col-md-7">
+            <h4 class="pb-2"><a href="https://github.com/RichieSams/FiberTaskingLib">FiberTaskingLib</a></h4>
+            <p>
+                FiberTaskingLib is a library for enabling task-based multi-threading. It allows execution of task graphs with arbitrary dependencies.
+            </p>
+            <p>
+                Under the covers, the task graph is executed using fibers, which in turn, are run on a pool of worker threads (one thread per CPU core).
+                This allows the scheduler to wait on dependencies without task chaining or context switches.
+            </p>
+            <p>
+                FTL was created as a proof of concept of the ideas presented by Christian Gyrling in his 2015 GDC Talk 'Parallelizing the Naughty Dog Engine Using Fibers'
+            </p>
+        </div>
+    </div>
+    <div class="row py-3">
+        <div class="col-md-5">
+            <img class="d-flex align-items-center justify-content-center img-fluid" src="/static/images/halfling_project_obj_demo.png" width="900px"/>
+        </div>
+        <div class="col-md-7">
+            <h4 class="pb-2"><a href="https://github.com/RichieSams/thehalflingproject">The Halfling Project</a></h4>
+            <p>
+                The Halfling Project is a DirectX 11 renderer written in C++.
+                It's a series of demos I created to learn DX11, and computer graphics in general.
+            </p>
+            <p>
+                The first few demos follow along roughly with Frank Luna's book, "Introduction to 3D Game Programming with DirectX 11".
+                The next set of demos explore deferred rendering, mostly following Andrew Lauritzen's <a href="https://software.intel.com/en-us/articles/deferred-rendering-for-current-and-future-rendering-pipelines">course notes</a> from Siggraph 2010.
+            </p>
+        </div>
+    </div>
 </section>
 {% endblock %}
