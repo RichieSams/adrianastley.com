@@ -1,11 +1,11 @@
 /* body padding for fixed navbar */
 body {
-    padding-top: 50px;
+    padding-top: 65px;
 }
 
 /* hidden spacer before sections for proper offset */
 section:before {
-    height: 50px;
+    height: 65px;
     content: "";
     display:block;
 }
