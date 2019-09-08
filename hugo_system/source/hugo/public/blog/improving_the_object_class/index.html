@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Improving the &#39;Object&#39; Class and Using Classes for ResultActions &middot; Adrian Astley</title>
+    <meta name="generator" content="Hugo 0.16" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Adrian Astley">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="https://adrianastley.com/blog/improving_the_object_class/"/>
+    <link rel="icon" href="https://adrianastley.comfavicon.ico">
+    <link rel="apple-touch-icon" href="https://adrianastley.comapple-touch-icon.png" />
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/style.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Improving the &#39;Object&#39; Class and Using Classes for ResultActions" />
+<meta property="og:description" content="Last week, I posted about using an &lsquo;Object&rsquo; class to encapsulate the variable-typed arguments for ResultActions. You guys posted some awesome feedback[1] and I used it to improve the class. First, I renamed the class to &lsquo;SingleValueContainer&rsquo; so users have a better sense of what it is. Second, following Fuzzie&#39;s advice , I put all the values except for String, directly in the union. It&rsquo;s the same or less memory cost and results in less heap allocations." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://adrianastley.com/blog/improving_the_object_class/" />
+
+
+<meta property="og:updated_time" content="2013-07-01T05:03:00-05:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Improving the &#39;Object&#39; Class and Using Classes for ResultActions">
+<meta itemprop="description" content="Last week, I posted about using an &lsquo;Object&rsquo; class to encapsulate the variable-typed arguments for ResultActions. You guys posted some awesome feedback[1] and I used it to improve the class. First, I renamed the class to &lsquo;SingleValueContainer&rsquo; so users have a better sense of what it is. Second, following Fuzzie&#39;s advice , I put all the values except for String, directly in the union. It&rsquo;s the same or less memory cost and results in less heap allocations.">
+
+
+<meta itemprop="dateModified" content="2013-07-01T05:03:00-05:00" />
+<meta itemprop="wordCount" content="514">
+
+
+
+<meta itemprop="keywords" content="General,ScummVM," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="Improving the &#39;Object&#39; Class and Using Classes for ResultActions"/>
+<meta name="twitter:description" content="Last week, I posted about using an &lsquo;Object&rsquo; class to encapsulate the variable-typed arguments for ResultActions. You guys posted some awesome feedback[1] and I used it to improve the class. First, I renamed the class to &lsquo;SingleValueContainer&rsquo; so users have a better sense of what it is. Second, following Fuzzie&#39;s advice , I put all the values except for String, directly in the union. It&rsquo;s the same or less memory cost and results in less heap allocations."/>
+<meta name="twitter:site" content="@adastley"/>
+
+
+    
+
+    <style>
+        .full-width {
+            width: 100% !important;
+        }
+    </style>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <div id="logo">
+          
+          <span class="site-title">Adrian Astley</span>
+      </div>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/">Home</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+      </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:https://adrianastley.com">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/">Home</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a></td>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:https://adrianastley.com">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	<div class="outer">
+	    <section id="main" class="full-width">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="https://adrianastley.com/blog/improving_the_object_class/">
+    <h1 class="article-title" itemprop="name">
+        Improving the &#39;Object&#39; Class and Using Classes for ResultActions
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2013-07-01 05:03:00 -0500 CDT" itemprop="datePublished">2013-07-01</time>
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="https://adrianastley.comcategories/scummvm">ScummVM</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+        
+    </div>
+</header>
+
+			<br/>
+            <div class="article-entry" itemprop="articleBody">
+                <p>Last week, I posted about using an &lsquo;Object&rsquo; class to encapsulate the variable-typed arguments for ResultActions. You guys posted some awesome feedback<a href="#reference1"><sup>[1]</sup></a> and I used it to improve the class. First, I renamed the class to &lsquo;SingleValueContainer&rsquo; so users have a better sense of what it is. Second, following 
+<a class='fancybox
+		 
+		' href="/static/images/blog/improving_the_object_class/fuzzie_response.png">
+	Fuzzie's advice
+</a>, I put all the values except for String, directly in the union. It&rsquo;s the same or less memory cost and results in less heap allocations.</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">union</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">bool</span>&nbsp;boolVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">byte</span>&nbsp;byteVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">int16</span>&nbsp;int16Val;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint16</span>&nbsp;uint16Val;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">int32</span>&nbsp;int32Val;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;uint32Val;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">float</span>&nbsp;floatVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">double</span>&nbsp;doubleVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">char</span>&nbsp;*stringVal;
+}&nbsp;_value;</pre>
+
+<p><br /></p>
+
+<p>You&rsquo;ll notice that the stringVal isn&rsquo;t actually a Common::String object, but rather a pointer to a char array. This saves a bit of memory at the cost of a couple strlen(), memcpy(), and String object assigment.</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:#216f85;">SingleValueContainer</span>::<span style="color:#850000;">SingleValueContainer</span>(<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;value)&nbsp;:&nbsp;_objectType(<span style="color:#216f85;">BYTE</span>)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;_value.stringVal&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:blue;">char</span>[value.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1];
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">memcpy</span>(_value.stringVal,&nbsp;value.<span style="color:#850000;">c_str</span>(),&nbsp;value.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1);
+}
+<span style="color:#216f85;">SingleValueContainer</span>&nbsp;&amp;<span style="color:#216f85;">SingleValueContainer</span>::<span style="color:teal;">operator</span><span style="color:teal;">=</span>(<span style="color:blue;">const</span>&nbsp;<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;&amp;rhs)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">if</span>&nbsp;(_objectType&nbsp;!=&nbsp;<span style="color:#216f85;">STRING</span>)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_objectType&nbsp;=&nbsp;<span style="color:#216f85;">STRING</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_value.stringVal&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:blue;">char</span>[rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">memcpy</span>(_value.stringVal,&nbsp;rhs.<span style="color:#850000;">c_str</span>(),&nbsp;rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1);
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;*<span style="color:blue;">this</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;length&nbsp;=&nbsp;<span style="color:#850000;">strlen</span>(_value.stringVal);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">if</span>&nbsp;(length&nbsp;&lt;=&nbsp;rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">memcpy</span>(_value.stringVal,&nbsp;rhs.<span style="color:#850000;">c_str</span>(),&nbsp;rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1);
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span style="color:blue;">else</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">delete</span><span style="color:blue;">[]</span>&nbsp;_value.stringVal;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_value.stringVal&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:blue;">char</span>[rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">memcpy</span>(_value.stringVal,&nbsp;rhs.<span style="color:#850000;">c_str</span>(),&nbsp;rhs.<span style="color:#850000;">size</span>()&nbsp;+&nbsp;1);
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;*<span style="color:blue;">this</span>;
+}
+<span style="color:blue;">bool</span>&nbsp;<span style="color:#216f85;">SingleValueContainer</span>::<span style="color:#850000;">getStringValue</span>(<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;*returnValue)&nbsp;<span style="color:blue;">const</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">if</span>&nbsp;(_objectType&nbsp;!=&nbsp;&nbsp;<span style="color:#216f85;">STRING</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">warning</span>(<span style="color:#a31515;">&quot;&#39;Object&#39;&nbsp;is&nbsp;not&nbsp;storing&nbsp;a&nbsp;Common::String.&quot;</span>);
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;*returnValue&nbsp;<span style="color:teal;">=</span>&nbsp;_value.stringVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;<span style="color:blue;">true</span>;
+}</pre>
+
+<p><br /></p>
+
+<p>With those changes the class seems quite solid. (The full source can be found <a href="https://github.com/RichieSams/scummvm/blob/20f8e05cc3d1661ed5d5af9c9e1420cce36b6893/engines/zvision/utility/single_value_container.h">here</a> and <a href="https://github.com/RichieSams/scummvm/blob/20f8e05cc3d1661ed5d5af9c9e1420cce36b6893/engines/zvision/utility/single_value_container.cpp">here</a>). However, after seeing 
+<a class='fancybox
+		 
+		' href="/static/images/blog/improving_the_object_class/zidane_sama_response.png">
+	Zidane Sama's comment
+</a>, I realized that there was a better way to tackle the problem than variant objects. Instead of trying to generalize the action types and arguments and storing them in structs, a better approach is to create a class for each action type with a common, &ldquo;execute()&rdquo; method that will be called by the scriptManager when the Criteria are met for an ResultAction.</p>
+
+<p><br /></p>
+
+<p>I first created an interface base class that all the different types would inherit from:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">class</span>&nbsp;<span style="color:#216f85;">ResultAction</span>&nbsp;{
+<span style="color:blue;">public</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">virtual</span>&nbsp;<span style="color:#850000;">~</span><span style="color:#850000;">ResultAction</span>()&nbsp;{}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">virtual</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;<span style="color:#850000;">execute</span>(<span style="color:#216f85;">ZEngine</span>&nbsp;*zEngine)&nbsp;=&nbsp;0;
+};</pre>
+
+<p><br /></p>
+
+<p>Next, I created the individual classes for each type of ResultAction:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">class</span>&nbsp;<span style="color:#216f85;">ActionAdd</span>&nbsp;:&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:#216f85;">ResultAction</span>&nbsp;{
+<span style="color:blue;">public</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">ActionAdd</span>(<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;line);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">bool</span>&nbsp;<span style="color:#850000;">execute</span>(<span style="color:#216f85;">ZEngine</span>&nbsp;*zEngine);
+ 
+<span style="color:blue;">private</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;_key;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">byte</span>&nbsp;_value;
+};</pre>
+
+<p><br /></p>
+
+<p>The individual classes parse out any arguments in their constructor and store them in member variables. In execute(), they execute the logic pertaining to their action. A pointer to ZEngine is passed in order to give the method access to all the necessary tools (modifying graphics, scriptManager states, sounds, etc.)</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:#216f85;">ActionAdd</span>::<span style="color:#850000;">ActionAdd</span>(<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;line)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#850000;">sscanf</span>(line.<span style="color:#850000;">c_str</span>(),&nbsp;<span style="color:#a31515;">&quot;:add(%u,%hhu)&quot;</span>,&nbsp;&amp;_key,&nbsp;&amp;_value);
+}
+ 
+<span style="color:blue;">bool</span>&nbsp;<span style="color:#216f85;">ActionAdd</span>::<span style="color:#850000;">execute</span>(<span style="color:#216f85;">ZEngine</span>&nbsp;*zEngine)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;zEngine-&gt;<span style="color:#850000;">getScriptManager</span>()-&gt;<span style="color:#850000;">addToStateValue</span>(_key,&nbsp;_value);
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;<span style="color:blue;">true</span>;
+}</pre>
+
+<p><br /></p>
+
+<p>Thus, in the script file parser I can just look for the action type and then pass create an action type, passing the constructor the whole line:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">while</span>&nbsp;(!line.<span style="color:#850000;">contains</span>(<span style="color:#a31515;">&#39;}&#39;</span>))&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:green;">//&nbsp;Parse&nbsp;for&nbsp;the&nbsp;action&nbsp;type</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">if</span>&nbsp;(line.<span style="color:#850000;">matchString</span>(<span style="color:#a31515;">&quot;*:add*&quot;</span>,&nbsp;<span style="color:blue;">true</span>))&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actionList.<span style="color:#850000;">push_back</span>(<span style="color:#216f85;">ActionAdd</span>(line));
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">else</span>&nbsp;<span style="color:blue;">if</span>&nbsp;(line.<span style="color:#850000;">matchString</span>(<span style="color:#a31515;">&quot;*:animplay*&quot;</span>,&nbsp;<span style="color:blue;">true</span>))&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actionList.<span style="color:#850000;">push_back</span>(<span style="color:#216f85;">ActionAnimPlay</span>(line));
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">else</span>&nbsp;<span style="color:blue;">if</span>&nbsp;(.....)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+}</pre>
+
+<p><br /></p>
+
+<p>While this means I have to create 20+ classes for all the different types of actions, I think this method nicely encapsulates and abstracts both the parsing and the action of the result. I&rsquo;m a bit sad that I&rsquo;m not going to be using the &lsquo;SingleValueContainer&rsquo; class, but if nothing else, I learned quite a bit while creating it. Plus, I won&rsquo;t be getting rid of it, so it might have a use somewhere else.</p>
+
+<p><br /></p>
+
+<p>This coming week I need to finish creating all the classes and then try to finish the rest of the engine skeleton. As always, feel free to comment / ask questions.</p>
+
+<p><br /></p>
+
+<p>Happy coding!&nbsp;&nbsp;&nbsp;:)</p>
+
+<p><br /><br /></p>
+
+<p><strong>[1]</strong>: <a name="reference1"></a>My original blog was on Blogger. I have since migrated all the content here, except the comments. You&rsquo;ll just have to take my word for it that the comments were useful. :P</p>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="https://adrianastley.com/blog/improving_the_object_class/" data-id="c1fbb472057cc84368884a723f7bbbef" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="https://adrianastley.com/blog/improving_the_object_class//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+        </div>
+    </article>
+
+    
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'adrianastley-com';
+    var disqus_identifier = 'https:\/\/adrianastley.com\/blog\/improving_the_object_class\/';
+    var disqus_title = 'Improving the \x27Object\x27 Class and Using Classes for ResultActions';
+    var disqus_url = 'https:\/\/adrianastley.com\/blog\/improving_the_object_class\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+    
+</section>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017
+      Adrian Astley
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://adrianastley.com/static/fancybox/jquery.fancybox.pack.js"></script>
+<script src="https://adrianastley.com/static/js/script.js"></script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+</body>
+</html>

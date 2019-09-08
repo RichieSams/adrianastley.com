@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>ZFS File Format &middot; Adrian Astley</title>
+    <meta name="generator" content="Hugo 0.16" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Adrian Astley">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="https://adrianastley.com/blog/zfs_file_format/"/>
+    <link rel="icon" href="https://adrianastley.comfavicon.ico">
+    <link rel="apple-touch-icon" href="https://adrianastley.comapple-touch-icon.png" />
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/style.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="ZFS File Format" />
+<meta property="og:description" content="Over the years I&rsquo;ve reverse engineered quite a few file formats, but I&rsquo;ve never really sat down and picked apart why a format was designed the way it was. With that said, I wanted to show the ZFS archive file format and highlight some of the peculiarities I saw and perhaps you guys can answer some of my questions. For some context, Z-engine was created around 1995 and was used on Macintosh, MS-DOS, and Windows 95." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://adrianastley.com/blog/zfs_file_format/" />
+
+
+<meta property="og:updated_time" content="2013-06-12T10:59:00-05:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="ZFS File Format">
+<meta itemprop="description" content="Over the years I&rsquo;ve reverse engineered quite a few file formats, but I&rsquo;ve never really sat down and picked apart why a format was designed the way it was. With that said, I wanted to show the ZFS archive file format and highlight some of the peculiarities I saw and perhaps you guys can answer some of my questions. For some context, Z-engine was created around 1995 and was used on Macintosh, MS-DOS, and Windows 95.">
+
+
+<meta itemprop="dateModified" content="2013-06-12T10:59:00-05:00" />
+<meta itemprop="wordCount" content="299">
+
+
+
+<meta itemprop="keywords" content="General,ScummVM," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="ZFS File Format"/>
+<meta name="twitter:description" content="Over the years I&rsquo;ve reverse engineered quite a few file formats, but I&rsquo;ve never really sat down and picked apart why a format was designed the way it was. With that said, I wanted to show the ZFS archive file format and highlight some of the peculiarities I saw and perhaps you guys can answer some of my questions. For some context, Z-engine was created around 1995 and was used on Macintosh, MS-DOS, and Windows 95."/>
+<meta name="twitter:site" content="@adastley"/>
+
+
+    
+
+    <style>
+        .full-width {
+            width: 100% !important;
+        }
+    </style>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <div id="logo">
+          
+          <span class="site-title">Adrian Astley</span>
+      </div>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/">Home</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+      </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:https://adrianastley.com">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/">Home</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a></td>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:https://adrianastley.com">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	<div class="outer">
+	    <section id="main" class="full-width">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="https://adrianastley.com/blog/zfs_file_format/">
+    <h1 class="article-title" itemprop="name">
+        ZFS File Format
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2013-06-12 10:59:00 -0500 CDT" itemprop="datePublished">2013-06-12</time>
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="https://adrianastley.comcategories/scummvm">ScummVM</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+        
+    </div>
+</header>
+
+			<br/>
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p>Over the years I&rsquo;ve reverse engineered quite a few file formats, but I&rsquo;ve never really sat down and picked apart why a format was designed the way it was. With that said, I wanted to show the ZFS archive file format and highlight some of the peculiarities I saw and perhaps you guys can answer some of my questions.</p>
+
+<p><br/></p>
+
+<p>For some context, Z-engine was created around 1995 and was used on Macintosh, MS-DOS, and Windows 95.</p>
+
+<h2 id="format">Format</h2>
+
+<p>The main file header is defined as:
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">struct</span>&nbsp;<span style="color:#216f85;">ZfsHeader</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;magic;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;unknown1;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;maxNameLength;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;filesPerBlock;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;fileCount;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">byte</span>&nbsp;xorKey[4];
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;fileSectionOffset;
+};</pre></p>
+
+<p><br /></p>
+
+<ul>
+<li>name is the file name right-padded with null characters</li>
+<li>offset is the offset to the actual file data</li>
+<li>id is a the numeric id of the file. The id&rsquo;s increment from 0 to fileCount</li>
+<li>size is the length of the file</li>
+<li>unknown is self explanatory</li>
+</ul>
+
+<pre>
+[Main Header]
+ 
+[uint32 offsetToPage2]
+[Page 1 File Entry Headers]
+[Page 1 File Data]
+ 
+[uint32 offsetToPage3]
+[Page 2 File Entry Headers]
+[Page 2 File Data]
+ 
+etc.
+</pre>
+
+<h2 id="questions-and-observations">Questions and Observations</h2>
+
+<p><strong>maxNameLength</strong></p>
+
+<p>Why have a fixed size name block vs. null terminated or [size][string]? Was that just the popular thing to do back then so the entire header to could be cast directly to a struct?</p>
+
+<p><br /></p>
+
+<p><strong>filesPerBlock</strong></p>
+
+<p>What is the benefit to pagination? The only explanation I can see atm is that it was some artifact of their asset compiler max memory. Maybe I&rsquo;m missing something since I&rsquo;ve never programmed for that type of hardware.</p>
+
+<p><br /></p>
+
+<p><strong>fileSectionOffset</strong></p>
+
+<p>I&rsquo;ve seen things like this a lot in my reverse engineering; they give the offset to a section that&rsquo;s literally just after the header. Even if they were doing straight casting instead of incremental reading, a simple sizeof(mainHeader) would give them the offset to the next section. Again, if I&rsquo;m missing something, please let me know.</p>
+
+<p><br /></p>
+
+<p>Happy coding!&nbsp;&nbsp;&nbsp;:)</p>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="https://adrianastley.com/blog/zfs_file_format/" data-id="e534839a5c544783c02f6703766304ec" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="https://adrianastley.com/blog/zfs_file_format//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+        </div>
+    </article>
+
+    
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'adrianastley-com';
+    var disqus_identifier = 'https:\/\/adrianastley.com\/blog\/zfs_file_format\/';
+    var disqus_title = 'ZFS File Format';
+    var disqus_url = 'https:\/\/adrianastley.com\/blog\/zfs_file_format\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+    
+</section>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017
+      Adrian Astley
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://adrianastley.com/static/fancybox/jquery.fancybox.pack.js"></script>
+<script src="https://adrianastley.com/static/js/script.js"></script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+</body>
+</html>

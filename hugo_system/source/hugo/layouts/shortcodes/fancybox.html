@@ -1,0 +1,12 @@
+{{ $size := .Get "size" }}
+<a class='fancybox
+		{{ if eq $size "small" }}
+			fancybox-small
+		{{ else if eq $size "medium" }}
+			fancybox-medium
+		{{ else if eq $size "large" }}
+			fancybox-large
+		{{ end }} 
+		' href="{{ printf "%s%s%s" "/static/images" (.Page.RelPermalink | urlize) (.Get "img") }}">
+	{{ .Inner }}
+</a>

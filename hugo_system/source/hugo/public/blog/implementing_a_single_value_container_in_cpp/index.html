@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Implementing a Generic Single Value Container in C&#43;&#43; &middot; Adrian Astley</title>
+    <meta name="generator" content="Hugo 0.16" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Adrian Astley">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp/"/>
+    <link rel="icon" href="https://adrianastley.comfavicon.ico">
+    <link rel="apple-touch-icon" href="https://adrianastley.comapple-touch-icon.png" />
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/style.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://adrianastley.com/static/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Implementing a Generic Single Value Container in C&#43;&#43;" />
+<meta property="og:description" content="In my previous post I explained the format of the script system for ZEngine. Each Puzzle has a Results section which essentially stores function names and their arguments: results { action:assign(5985, 0) background:timer:7336(60) event:change_location(C,B,C0,1073) background:music:5252(1 a000h1tc.raw 1) } I wanted to be able to store each action inside a struct, and then have a linked list of all the structs. However, the problem is that both the number of arguments and the size of the arguments are variable." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp/" />
+
+
+<meta property="og:updated_time" content="2013-06-26T10:19:00-05:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Implementing a Generic Single Value Container in C&#43;&#43;">
+<meta itemprop="description" content="In my previous post I explained the format of the script system for ZEngine. Each Puzzle has a Results section which essentially stores function names and their arguments: results { action:assign(5985, 0) background:timer:7336(60) event:change_location(C,B,C0,1073) background:music:5252(1 a000h1tc.raw 1) } I wanted to be able to store each action inside a struct, and then have a linked list of all the structs. However, the problem is that both the number of arguments and the size of the arguments are variable.">
+
+
+<meta itemprop="dateModified" content="2013-06-26T10:19:00-05:00" />
+<meta itemprop="wordCount" content="860">
+
+
+
+<meta itemprop="keywords" content="General,ScummVM," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="Implementing a Generic Single Value Container in C&#43;&#43;"/>
+<meta name="twitter:description" content="In my previous post I explained the format of the script system for ZEngine. Each Puzzle has a Results section which essentially stores function names and their arguments: results { action:assign(5985, 0) background:timer:7336(60) event:change_location(C,B,C0,1073) background:music:5252(1 a000h1tc.raw 1) } I wanted to be able to store each action inside a struct, and then have a linked list of all the structs. However, the problem is that both the number of arguments and the size of the arguments are variable."/>
+<meta name="twitter:site" content="@adastley"/>
+
+
+    
+
+    <style>
+        .full-width {
+            width: 100% !important;
+        }
+    </style>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <div id="logo">
+          
+          <span class="site-title">Adrian Astley</span>
+      </div>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/">Home</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a>
+          
+          
+          
+          <a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+      </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:https://adrianastley.com">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/">Home</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/blog">Blog</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/projects/">Projects</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="https://adrianastley.com/resume/">Resume</a></td>
+          
+          
+
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:https://adrianastley.com">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	<div class="outer">
+	    <section id="main" class="full-width">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp/">
+    <h1 class="article-title" itemprop="name">
+        Implementing a Generic Single Value Container in C&#43;&#43;
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2013-06-26 10:19:00 -0500 CDT" itemprop="datePublished">2013-06-26</time>
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="https://adrianastley.comcategories/scummvm">ScummVM</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+        
+    </div>
+</header>
+
+			<br/>
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p>In my previous post I explained the format of the script system for ZEngine. Each Puzzle has a Results section which essentially stores function names and their arguments:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;">
+results {
+    action:assign(5985, 0)
+    background:timer:7336(60)
+    event:change_location(C,B,C0,1073)
+    background:music:5252(1 a000h1tc.raw 1)    
+}
+</pre>
+
+<p>I wanted to be able to store each action inside a struct, and then have a linked list of all the structs. However, the problem is that both the number of arguments and the size of the arguments are variable. Marisa Chan&rsquo;s solution was to store all the arguments in a space delimited char array. IE:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">char</span>&nbsp;arguments[25]&nbsp;=&nbsp;<span style="color:#a31515;">&quot;1&nbsp;a00h1tc.raw&nbsp;1&quot;</span>;
+</pre>
+
+<p><br /></p>
+
+<p>Simple, but not without it&rsquo;s problems.</p>
+
+<ol>
+<li>The size is fixed, since the char array is in a struct. In order to make sure we never overflow, we have to allocate a fairly large array. That said, in this particular case, each &lsquo;large&rsquo; array in this case would only be ~30 bytes per struct.</li>
+<li>By storing everything as strings, we put off parsing till the action function is actually called. At first glace, this doesn&rsquo;t seem too bad, since the data will have to be parsed anyway. However, this method forces it to be parsed at every call to that action function.</li>
+</ol>
+
+<p><br /></p>
+
+<p>Another option was to have everything stored in a linked list of void pointers. However, I don&rsquo;t think I need to convince anyone that void pointers are just gross and using them would be just asking for problems.</p>
+
+<p><br /></p>
+
+<p>What I really wanted was a typed way to store a variably typed (and sized) value. Therefore I created what I&rsquo;m calling the &ldquo;Object&rdquo; class. (I&rsquo;m up for suggestions for a better name)</p>
+
+<p><br /></p>
+
+<p>The heart of the class is a union that stores a variety of pointers to different types and an enum that defines what type is being stored:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">class</span>&nbsp;<span style="color:#216f85;">Object</span>&nbsp;{
+<span style="color:blue;">public</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">enum</span>&nbsp;<span style="color:#216f85;">ObjectType</span>&nbsp;:&nbsp;<span style="color:#216f85;">byte</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">BOOL</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">BYTE</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">INT16</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">UINT16</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">INT32</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">UINT32</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">FLOAT</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">DOUBLE</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">STRING</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;};
+ 
+<span style="color:blue;">private</span>:
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">ObjectType</span>&nbsp;_objectType;
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">union</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">bool</span>&nbsp;*boolVal;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">byte</span>&nbsp;*byteVal;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">int16</span>&nbsp;*int16Val;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint16</span>&nbsp;*uint16Val;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">int32</span>&nbsp;*int32Val;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">uint32</span>&nbsp;*uint32Val;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">float</span>&nbsp;*floatVal;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">double</span>&nbsp;*doubleVal;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#216f85;">Common</span>::<span style="color:#216f85;">String</span>&nbsp;*stringVal;
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;_value;
+};</pre>
+
+<p><br /></p>
+
+<p>_<em>objectType</em> keeps track of what type of data the object is storing and _<em>value</em> points to the actual data. If _<em>value</em> were instead to hold the actual data value, the union would be forced to sizeof(Common::String), which is quite large (~34 bytes), due to internal caching. Then we&rsquo;re back to the argument of storing things in containers much larger than what they need. By putting the data on the heap and only storing pointers to the data, we save the wasted space, but at the CPU cost of heap allocation.</p>
+
+<p>Now that the data is stored, how do we get it back? My original idea was to have implicit cast operators:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">operator</span>&nbsp;<span style="color:blue;">bool</span>();
+<span style="color:blue;">operator</span>&nbsp;<span style="color:#216f85;">byte</span>();
+<span style="color:blue;">operator</span>&nbsp;<span style="color:#216f85;">int16</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.</pre>
+
+<p>However, LordHoto, one of the GSoC mentors and ScummVM developers, brought my attention to the problems that can arise when using implicit casting. For example, a user could try to cast the data to a type that wasn&rsquo;t stored in the Object and the cast would work, but the data would be completely corrupted. Also, from a user point of view, it wasn&rsquo;t intuitive.</p>
+
+<p><br /></p>
+
+<p>Therefore, I removed the cast operators and created accessor methods:</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:blue;">bool</span>&nbsp;<span style="color:#850000;">getBoolValue</span>(<span style="color:blue;">bool</span>&nbsp;*returnValue)&nbsp;<span style="color:blue;">const</span>;
+<span style="color:blue;">bool</span>&nbsp;<span style="color:#850000;">getByteValue</span>(<span style="color:#216f85;">byte</span>&nbsp;*returnValue)&nbsp;<span style="color:blue;">const</span>;
+<span style="color:blue;">bool</span>&nbsp;<span style="color:#850000;">getInt16Value</span>(<span style="color:#216f85;">int16</span>&nbsp;*returnValue)&nbsp;<span style="color:blue;">const</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.
+ 
+<span style="color:blue;">bool</span>&nbsp;Object::getBoolValue(<span style="color:blue;">bool</span>&nbsp;*returnValue)&nbsp;<span style="color:blue;">const</span>&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">if</span>&nbsp;(_objectType&nbsp;!=&nbsp;&nbsp;BOOL)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;warning(<span style="color:#a31515;">&quot;&#39;Object&#39;&nbsp;not&nbsp;of&nbsp;type&nbsp;bool.&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;<span style="color:blue;">false</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;*returnValue&nbsp;=&nbsp;*_value.boolVal;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">return</span>&nbsp;<span style="color:blue;">true</span>;
+}</pre>
+
+<p><br /></p>
+
+<p>This adds a layer of type semi-protection to the class.</p>
+
+<p><br /></p>
+
+<p>Lastly, I added assigment operators to the class, but rather than making this post even longer, I&rsquo;ll just link the full source <a href="https://gist.github.com/RichieSams/5873413">here</a> and <a href="https://gist.github.com/RichieSams/5873397">here</a>.</p>
+
+<p>Advantages of &lsquo;Object&rsquo; class</p>
+
+<ul>
+<li>Can store relatively &lsquo;any&rsquo; type of data. (Any type not currently supported could be trivially added)</li>
+<li>Only uses as much space as needed.</li>
+<li>Transforms dynamically typed data into a statically typed &lsquo;box&rsquo; that can be stored in arrays, linked lists, hashmaps, etc. and can be iterated upon</li>
+</ul>
+
+<p>Disadvantages of &lsquo;Object&rsquo; class</p>
+
+<ul>
+<li>Adds a small memory overhead per object. ( 1 byte + sizeof(Operating System pointer) )</li>
+<li>Adds one heap memory allocation per object</li>
+</ul>
+
+<p><br /></p>
+
+<p>So is it better than Marisa Chan&rsquo;s implementation? It really depends on what you define as better. While it does save memory, only requires data to be parsed once, and, in my opinion, adds a great deal of elegance to handling the Results arguments, it does so at the cost of heap storage. Not only the cost of the initial allocation, but the cost of potential defragmentation runs. But then again, is the cost of heap storage really that big, especially since the data should have a relatively long life? (On average, the time an end user spends in a room in the game) That I don&rsquo;t know, since it all depends on the memory allocator implementation.</p>
+
+<p><br /></p>
+
+<p>In the end, I believe both methods perform well, and as such I choose the eloquence of using the &lsquo;Object&rsquo; class. I am very much open to your thoughts on both the class as a whole or on your take of the problem. Also, if I misspoke about something please, please, please let me know.</p>
+
+<p><br /></p>
+
+<p>Thanks for reading and happy coding!&nbsp;&nbsp;&nbsp;:)</p>
+
+<p><br /><br /></p>
+
+<h4 id="edit">*Edit</h4>
+
+<p>Upon further inspection I noticed that by using Common::String I&rsquo;m not only negating any memory size benefits from using &lsquo;Object&rsquo;, but potentially even using more memory, since Common::String has such a huge size.</p>
+
+<pre style="font-family:Consolas;font-size:13;color:black;"><span style="color:green;">//&nbsp;Marisa&nbsp;Chan</span>
+<span style="color:blue;">char</span>&nbsp;arguments[25]&nbsp;=&nbsp;<span style="color:#a31515;">&quot;1&nbsp;a00h1tc.raw&nbsp;1&quot;</span>;
+<span style="color:green;">//&nbsp;size&nbsp;=&nbsp;25;</span>
+ 
+<span style="color:green;">//&nbsp;Object:</span>
+<span style="color:#216f85;">Object</span>&nbsp;arg1&nbsp;=&nbsp;1;
+<span style="color:#216f85;">Object</span>&nbsp;arg2&nbsp;=&nbsp;<span style="color:#a31515;">&quot;a00h1tc.raw&quot;</span>;
+<span style="color:#216f85;">Object</span>&nbsp;arg3&nbsp;=&nbsp;1;
+ 
+<span style="color:green;">//&nbsp;size&nbsp;=&nbsp;(3&nbsp;*sizeof(Object))&nbsp;+&nbsp;sizeof(byte)&nbsp;+&nbsp;sizeof(Common::String)&nbsp;+&nbsp;sizeof(byte);</span>
+<span style="color:green;">//&nbsp;size&nbsp;=&nbsp;15&nbsp;+&nbsp;1&nbsp;+&nbsp;34&nbsp;+&nbsp;1;</span>
+<span style="color:green;">//&nbsp;size&nbsp;=&nbsp;51;</span></pre>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp/" data-id="ec767cacea65e165d409885d3290fc3b" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+        </div>
+    </article>
+
+    
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'adrianastley-com';
+    var disqus_identifier = 'https:\/\/adrianastley.com\/blog\/implementing_a_single_value_container_in_cpp\/';
+    var disqus_title = 'Implementing a Generic Single Value Container in C\x2b\x2b';
+    var disqus_url = 'https:\/\/adrianastley.com\/blog\/implementing_a_single_value_container_in_cpp\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+    
+</section>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017
+      Adrian Astley
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://adrianastley.com/static/fancybox/jquery.fancybox.pack.js"></script>
+<script src="https://adrianastley.com/static/js/script.js"></script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+</body>
+</html>

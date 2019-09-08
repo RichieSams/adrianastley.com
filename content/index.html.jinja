@@ -1,0 +1,27 @@
+{% extends "base.html.jinja" %}
+
+{% block content %}
+<section class="container">
+    <div class="row">
+        <img class="mx-auto d-block img-fluid" src="/static/images/stanford_dragon_jade.png" width="900px"/>
+    </div>
+    <div class="row">
+        <h6 class="mx-auto"><small>The Standford Dragon with a jade-like medium. Rendered with my hobby renderer, Lantern.</small></h6>
+    </div>
+    <div class="row pt-5">
+        <div class="col-md-7">
+            <p class="lead">
+                Hello. My name is Adrian Astley. I'm a Tools and Infrastructure Engineer at Activision Central Technology. I create and maintain software tools for the studios making Call of Duty.
+                More specifically, I support and monitor the Continuous Integration pipeline, the server farm running the CI, and the networking infrastructure for moving the vast amount of data between servers.
+            </p>
+            <p class="lead">
+                Within programming, my areas of interest are tools design and implementation, 3D graphics, and path tracing. Outside of programming, I'm a board game nerd and rock climbing enthusiast.
+            </p>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+            <img class="mx-auto d-block img-fluid" src="/static/images/headshot.png" width="300px"/>
+        </div>
+    </div>
+</section>
+{% endblock %}

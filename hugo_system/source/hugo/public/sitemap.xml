@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://adrianastley.com/</loc>
+    <lastmod>2016-10-21T13:11:37-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/projects/lantern/</loc>
+    <lastmod>2016-10-21T13:11:37-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/the_engine_skeleton_gains_some_tendons_part_2/</loc>
+    <lastmod>2013-07-17T16:21:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/the_engine_skeleton_gains_some_tendons_part_1/</loc>
+    <lastmod>2013-07-11T01:27:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/improving_the_object_class/</loc>
+    <lastmod>2013-07-01T05:03:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/implementing_a_single_value_container_in_cpp/</loc>
+    <lastmod>2013-06-26T10:19:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/scripting/</loc>
+    <lastmod>2013-06-26T07:42:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/zfs_file_format/</loc>
+    <lastmod>2013-06-12T10:59:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/git_is_hard_but_scummvm_common_is_awesome/</loc>
+    <lastmod>2013-06-12T08:04:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/blog/obligatory_hello_world/</loc>
+    <lastmod>2013-05-31T12:41:07-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adrianastley.com/resume/placeholder/</loc>
+  </url>
+  
+</urlset>
