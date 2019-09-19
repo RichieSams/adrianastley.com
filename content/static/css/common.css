@@ -9,3 +9,10 @@ section:before {
     content: "";
     display:block;
 }
+
+pre {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
