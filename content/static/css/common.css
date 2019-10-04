@@ -16,3 +16,11 @@ pre {
     padding-left: 6px;
     padding-right: 6px;
 }
+
+li p {
+    margin-bottom: 0;
+}
+
+li pre {
+    margin-bottom: 0;
+}
