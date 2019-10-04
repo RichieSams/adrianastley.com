@@ -1,0 +1,24 @@
+{% import 'macros.jinja' fancybox_image, fancybox_link, image, youtube, admonition, end_admonition %}
+
+<!DOCTYPE html>
+<html>
+{% include "head.html.jinja" %}
+<body>
+    {% include "nav.html.jinja" %}
+    <main>
+        <section class="container">
+            <h6 class="pb-2 pt-3"><localtime utc="{% block date %}{% endblock %}"></localtime></h6>
+            <h3 class="pb-3">{% block title %}{% endblock %}</h3>
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+    {% include "scripts.html.jinja" %}
+    <script>
+        $(document).ready(function() {
+            $("localtime").each(function() {
+                $(this).text(ConvertDateStrToLocalDateStr($(this).attr("utc").trim()));
+            });
+        });
+    </script>
+</body>
+</html>
