@@ -1,0 +1,101 @@
+{% macro fancybox_image(path, width=-1, caption='', justification='center', border=false) export %}
+    <div>
+        <a data-fancybox="gallery"
+            {% if caption %}
+                data-caption="{{ caption }}"
+            {% endif %}
+            href="{{ path }}"><img class="d-block img-fluid
+            {% if justification == 'center' %}
+                mx-auto
+            {% elif justification == 'left' %}
+                float-left
+            {% elif justification == 'right' %}
+                float-right
+            {% endif %}
+            {% if border %}
+                border border-dark
+            {% endif %}
+            "
+            {% if width != -1 %}
+                width="{{ width }}px"
+            {% endif %}
+            src="{{ path }}" /></a>
+    </div>
+    {% if caption %}
+        <div>
+            <h6 class="text-muted
+                {% if justification == 'center' %}
+                    text-center
+                {% elif justification == 'left' %}
+                    text-left
+                {% elif justification == 'right' %}
+                    text-right
+                {% endif %}
+                "
+                ><small>{{ caption }}</small></h6>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro fancybox_link(path, text) export %}
+    <a data-fancybox="gallery" href="{{ path }}">{{ text }}</a>
+{% endmacro %}
+
+{% macro image(path, width=-1, caption='', justification='center', border=false) export %}
+    <div>
+        <img class="d-block img-fluid
+            {% if justification == 'center' %}
+                mx-auto
+            {% elif justification == 'left' %}
+                media-left
+            {% elif justification == 'right' %}
+                media-right
+            {% endif %}
+            {% if border %}
+                border border-dark
+            {% endif %}
+            "
+            {% if width != -1 %}
+                width="{{ width }}px"
+            {% endif %}
+            src="{{ path }}" />
+    </div>
+    {% if caption %}
+        <div>
+            <h6 class="text-muted
+                {% if justification == 'center' %}
+                    text-center
+                {% elif justification == 'left' %}
+                    text-left
+                {% elif justification == 'right' %}
+                    text-right
+                {% endif %}
+                "
+                ><small>{{ caption }}</small></h6>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro youtube(id, aspect_ratio='16by9', col_width=8, justification='center') export %}
+    <div class="row">
+        <div class="embed-responsive embed-responsive-{{ aspect_ratio }}
+            {% if justification == 'center' %}
+                offset-sm-{{ (12 - col_width) / 2 }} col-sm-{{ col_width }}
+            {% elif justification == 'left' %}
+                col-sm-{{ col_width }}
+            {% elif justification == 'right' %}
+                offset-sm-{{ 12 - col_width }} col-sm-{{ col_width }}
+            {% endif %}
+            ">
+            <iframe src="https://www.youtube-nocookie.com/embed/{{ id }}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro admonition(type) export %}
+    <div class="alert alert-{{ type }}">
+{% endmacro %}
+
+{% macro end_admonition() export %}
+    </div>
+{% endmacro %}
