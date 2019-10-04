@@ -1,7 +1,13 @@
 .PHONY: build serve
 
+ifeq ($(OS),Windows_NT)
+	EXT=.exe
+else
+	EXT=
+endif
+
 build:
-	./sitegen.exe build -c site_gen_config.yaml
+	./sitegen$(EXT) build -c site_gen_config.yaml
 
 serve:
-	./sitegen.exe serve -c site_gen_config.yaml -p 3456
+	./sitegen$(EXT) serve -c site_gen_config.yaml -p 3456
