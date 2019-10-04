@@ -1,3 +1,7 @@
 content_folder: content
 templates_folder: templates
 output_folder: output
+
+code_formatting:
+    chroma_style: monokai
+    tab_width: 4
