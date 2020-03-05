@@ -5,3 +5,7 @@ output_folder: output
 code_formatting:
     chroma_style: monokai
     tab_width: 4
+
+data:
+    blog:
+        pattern: blog/*.md

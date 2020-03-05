@@ -2,5 +2,17 @@
 
 {% block content %}
 <section class="container">
+    <h3 class="py-3">Blog</h3>
+    {% for entry in blog %}
+        <div class="row py-3">
+            <div class="col-md-5">
+                <img class="d-flex align-items-center justify-content-center img-fluid" src="{{ entry.banner }}" width="900px"/>
+            </div>
+            <div class="col-md-7">
+                <h4 class="pb-2"><a href="{{ entry.output_path }}">{{ entry.title }}</a></h4>
+                <p>{{ entry.description }}</p>
+            </div>
+        </div>
+    {% endfor %}
 </section>
 {% endblock %}

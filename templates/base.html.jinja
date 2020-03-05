@@ -7,5 +7,12 @@
         {% block content %}{% endblock %}
     </main>
     {% include "scripts.html.jinja" %}
+    <script>
+        $(document).ready(function() {
+            $("localtime").each(function() {
+                $(this).text(ConvertDateStrToLocalDateStr($(this).attr("utc").trim()));
+            });
+        });
+    </script>
 </body>
 </html>
