@@ -13,10 +13,10 @@ We're using Git in my Elements of Databases class this semester, so I though I w
 
 #### What is Git?
 
-[TL;DR](http://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn't_read) explanation of what Git is:  
+[TL;DR](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read) explanation of what Git is:  
 
 Git was designed to allow multiple users to work on the same project as the same time.\
-It also serves as a way to save and display your work history.  
+It also serves as a way to save and display your work history.
 
 #### First things first
 
