@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/getting_started_with_git/log_history2.png"
 categories: ["General"]
 date: 2014-01-22T22:01:00.002000-06:00
 description: ""
