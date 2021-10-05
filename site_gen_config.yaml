@@ -9,3 +9,5 @@ code_formatting:
 data:
     blog:
         pattern: blog/*.md
+        sort_key: date
+        sort_ascending: false

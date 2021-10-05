@@ -6,9 +6,10 @@
     {% for entry in blog %}
         <div class="row py-3">
             <div class="col-md-5">
-                <img class="d-flex align-items-center justify-content-center img-fluid" src="{{ entry.banner }}" width="900px"/>
+                <a href="{{ entry.output_path }}"><img class="d-flex align-items-center justify-content-center img-fluid" src="{{ entry.banner }}" width="900px"/></a>
             </div>
             <div class="col-md-7">
+                <h6><ion-icon class="pr-2" name="calendar-outline"></ion-icon><localtime utc="{{ entry.date }}"></localtime></h6>
                 <h4 class="pb-2"><a href="{{ entry.output_path }}">{{ entry.title }}</a></h4>
                 <p>{{ entry.description }}</p>
             </div>
