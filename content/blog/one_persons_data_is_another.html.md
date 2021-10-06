@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/one_persons_data_is_another/banner.jpg"
 categories: ["ScummVM"]
 date: 2013-07-29T11:51:00.002000-05:00
 description: ""

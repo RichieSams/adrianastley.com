@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/tracing_light_in_a_virtual_world/shooting_a_ray.png"
 categories: ["Path Tracing"]
 date: 2015-03-05T20:35:00.000-06:00
 description: ""

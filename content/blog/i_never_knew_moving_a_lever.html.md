@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/i_never_knew_moving_a_lever/banner.png"
 categories: ["ScummVM"]
 date: 2013-09-13T20:19:00.002000-05:00
 description: ""

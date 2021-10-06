@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/creating_randomness_and_accumulating/white_noise.jpg"
 categories: ["Path Tracing"]
 date: 2015-03-06T14:20:00.003-06:00
 description: ""

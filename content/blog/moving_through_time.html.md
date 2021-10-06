@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/moving_through_time/banner.jpg"
 categories: ["ScummVM"]
 date: 2013-08-18T20:15:00.002000-05:00
 description: ""

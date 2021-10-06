@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/the_engine_skeleton_gains_part1/banner.png"
 categories: ["ScummVM"]
 date: 2013-07-11T01:27:00.005000-05:00
 description: ""

@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/improving_the_object_class/banner.png"
 categories: ["ScummVM"]
 date: 2013-07-01T17:03:00.003000-05:00
 description: ""

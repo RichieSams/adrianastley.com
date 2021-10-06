@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/zfs_file_format/banner.png"
 categories: ["ScummVM"]
 date: 2013-06-12T22:59:00.001000-05:00
 description: ""

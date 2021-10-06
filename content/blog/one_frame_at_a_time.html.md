@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/one_frame_at_a_time/i_p_and_b_frames.png"
 categories: ["ScummVM"]
 date: 2013-09-13T15:23:00-05:00
 description: ""

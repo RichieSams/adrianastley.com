@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/the_making_of_psychedelic_pictures/warped_rainbow_grid.png"
 categories: ["ScummVM"]
 date: 2013-08-03T17:35:00-05:00
 description: ""

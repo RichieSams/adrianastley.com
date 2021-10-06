@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/implementing_a_single_value_container/banner.jpg"
 categories: ["ScummVM"]
 date: 2013-06-26T22:19:00.005000-05:00
 description: ""

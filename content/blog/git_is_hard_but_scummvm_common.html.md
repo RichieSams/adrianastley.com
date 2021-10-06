@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/git_is_hard_but_scummvm_common/git.jpg"
 categories: ["ScummVM"]
 date: 2013-06-12T20:04:00.005000-05:00
 description: ""

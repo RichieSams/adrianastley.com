@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/blog/one_pixel_at_a_time/wrapping_summary.png"
 categories: ["ScummVM"]
 date: 2013-08-30T02:51:00.002000-05:00
 description: ""

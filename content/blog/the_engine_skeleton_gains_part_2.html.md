@@ -1,5 +1,5 @@
 +++
-banner: ""
+banner: "/static/images/zengine_console.png"
 categories: ["ScummVM"]
 date: 2013-07-17T16:21:00.002000-05:00
 description: ""
