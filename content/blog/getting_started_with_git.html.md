@@ -192,319 +192,84 @@ However, it would make sense to split the changes into two commits. How do we do
 
 #### Pulling
 
+So far, we've been the only ones on our repository. However, the whole point of using a repository is so that multiple people can work at the same time.  
 
+This is a portion of the commit history for an open source project I'm part of called ScummVM:  
 
-So far, we've been the only ones on our repository. However, the whole
-
-point of using a repository is so that multiple people can work at the
-
-same time.  
-
-  
-
-This is a portion of the commit history for an open source project I'm
-
-part of called ScummVM:  
-
-
-
-[![](../images/thumbnails/2014-01-22-getting-started-with-git-34-MjAH5aL.png)](../images/2014-01-22-getting-started-with-git-34-MjAH5aL.png)
-
-
+{{ image('/static/images/blog/getting_started_with_git/pull_scummvm_history.png') }}
 
 As you can see, there are many changes going on all the same time.  
 
+#### Let's imagine a scenario
 
-
-#### Let's imagine a scenario:
-
-
-
-You and your partner Joe are working on some code at the same time. You
-
-make some changes and commit them. However, in the meantime, Joe also
-
-made some changes, commited them, and pushed them to the repository. If
-
-you try and push, git will complain, and rightfully so. You don't have
-
-the most up-to-date version of the repository. Therefore, in order to
-
-push your changes to the repository, you first need to pull Joe's
-
-changes and merge any conflicts.  
-
-  
+You and your partner Joe are working on some code at the same time. You make some changes and commit them. However, in the meantime, Joe also made some changes, commited them, and pushed them to the repository. If you try and push, git will complain, and rightfully so. You don't have the most up-to-date version of the repository. Therefore, in order to push your changes to the repository, you first need to pull Joe's changes and merge any conflicts.  
 
 How do you pull?  
 
-Just click the "Pull" button in SourceTree. Click ok and wait for git to
+Just click the "Pull" button in SourceTree. Click ok and wait for git to do its work. Once it finishes, you'll notice Joe's new commit have shown up in your history. \*Now\* you can push.
 
-do its work. Once it finishes, you'll notice Joe's new commit have shown
-
-up in your history. \*Now\* you can push.  
-
-  
-
-Therefore, it's common practice to always pull before you push. Nothing
-
-will go wrong if you don't, since git will catch the error, but it's a
-
-good habit to get in.  
-
-  
-
-
+Therefore, it's common practice to always pull before you push. Nothing will go wrong if you don't, since git will catch the error, but it's a good habit to get in.  
 
 ### Tips and Tricks
 
-
-
 #### Stashing
 
+So say you have a group of changes that you're working on, but you want to try a different way to fix the problem. One way to approach that is by "Stashing". Stashing stores all your current changes and then reverts your code back to your last commit. Then at a later time you can restore the stash back onto your code.  
 
+1. To stash changes, just press the stash button in SourceTree
+{{ image('/static/images/blog/getting_started_with_git/stash_button.png') }}
+1. To bring your changes back, right click on the stash you want and   click "Apply"
+{{ image('/static/images/blog/getting_started_with_git/apply_stash.png') }}
+1. It will bring up a dialog box like this:
+{{ image('/static/images/blog/getting_started_with_git/apply_stash_confirmation.png') }}
+1. If you leave the "Delete after applying" checkbox unchecked, the stash will stay, even after it's been restored. I usually delete a stash after applying, but it can be useful to keep it if you want to apply it somewhere else.
 
-So say you have a group of changes that you're working on, but you want
+Stashing can also be done on the command line with:
 
-to try a different way to fix the problem. One way to approach that is
+* git stash
+* git stash pop
 
-by "Stashing". Stashing stores all your current changes and then reverts
-
-your code back to your last commit. Then at a later time you can restore
-
-the stash back onto your code.  
-
-  
-
-  
-
-
-
-1.  To stash changes, just press the stash button in SourceTree 
-
-    [![](../images/thumbnails/2014-01-22-getting-started-with-git-35-n3xPm21.png)](../images/2014-01-22-getting-started-with-git-35-n3xPm21.png)
-
-
-
-2.  To bring your changes back, right click on the stash you want and
-
-    click "Apply" 
-
-    [![](../images/thumbnails/2014-01-22-getting-started-with-git-36-XJiY0UZ.png)](../images/2014-01-22-getting-started-with-git-36-XJiY0UZ.png)
-
-
-
-3.  It will bring up a dialog box like this: 
-
-    [![](../images/thumbnails/2014-01-22-getting-started-with-git-37-kpilHjc.png)](../images/2014-01-22-getting-started-with-git-37-kpilHjc.png)
-
-
-
-4.  If you leave the "Delete after applying" checkbox unchecked, the
-
-    stash will stay, even after it's been restored. I usually delete a
-
-    stash after applying, but it can be useful to keep it if you want to
-
-    apply it somewhere else.
-
-
-
-  
-
-Stashing can also be done on the command line with:  
-
-  
-
-
-
--   git stash
-
--   git stash pop
-
-
-
-  
-
-The first command stashes changes and the second restores the last stash
-
-and then deletes it  
-
-  
-
-
+The first command stashes changes and the second restores the last stash and then deletes it  
 
 #### Going back in history
 
+Say you want to go back to a certain state in your history, perhaps because that was the last time your code worked, or maybe to see if a certain stage also had a certain bug.
 
-
-Say you want to go back to a certain state in your history, perhaps
-
-because that was the last time your code worked, or maybe to see if a
-
-certain stage also had a certain bug.  
-
-  
-
-
-
-1.  First, stash or commit all your current changes. If you don't, you
-
-    could lose some or all of your work.
-
-2.  Then, in the Log/History tab of SourceTree, double click on the
-
-    commit you would like to move to. You should get a dialog box like
-
-    this: 
-
-    [![](../images/thumbnails/2014-01-22-getting-started-with-git-38-02w3nki.png)](../images/2014-01-22-getting-started-with-git-38-02w3nki.png)
-
-
-
-3.  That's to confirm that you want to move. Click yes.
-
-4.  Now your code should have changed to reflect the state of the commit
-
-    you clicked.
-
-5.  If you want to make any changes here, first create a branch. That's
-
-    covered in the next section.
-
-6.  To move back to the end, just double click the last commit you were
-
-    on.
-
-
-
-  
-
-  
-
-
+1. First, stash or commit all your current changes. If you don't, you could lose some or all of your work.
+1. Then, in the Log/History tab of SourceTree, double click on the commit you would like to move to. You should get a dialog box like this:
+{{ image('/static/images/blog/getting_started_with_git/history_confirmation.png') }}
+1. That's to confirm that you want to move. Click yes.
+1. Now your code should have changed to reflect the state of the commit you clicked.
+1. If you want to make any changes here, first create a branch. That's covered in the next section.
+1. To move back to the end, just double click the last commit you were on.
 
 #### Branching
 
+Consider that you and Joe are both trying to come up with a solution to a bug. Rather than both working in 'master' and potentially messing up each other's code, it would make more sense if you each had a separate instance of the code. This can be solved with branching.  
 
-
-Consider that you and Joe are both trying to come up with a solution to
-
-a bug. Rather than both working in 'master' and potentially messing up
-
-each other's code, it would make more sense if you each had a separate
-
-instance of the code. This can be solved with branching.  
-
-  
-
-So for example, you could work in a branch called, 'solution1' and Joe
-
-could work in a branch called 'solution2'. Then when everything is
-
-finished, you choose the branch you like best and use git to merge that
-
-branch back into 'master'.  
-
-  
+So for example, you could work in a branch called, 'solution1' and Joe could work in a branch called 'solution2'. Then when everything is finished, you choose the branch you like best and use git to merge that branch back into 'master'.  
 
 So to start, let's create a branch.  
 
-  
+1. Easy enough. Just click the "Branch" button
+{{ image('/static/images/blog/getting_started_with_git/create_branch.png') }}
+1. Name the branch and press "Create Branch". Branch names can not contain spaces and are case sensitive
+1. You should now be in your new branch. Any commits you do will commit to this branch.
 
+To move to another branch, or "checkout" a branch, simply double click the branch in your commit history or double click the branch in the branch list in the left column  
 
+{{ image('/static/images/blog/getting_started_with_git/branches.png') }}
 
-1.  Easy enough. Just click the "Branch" button
+Now that you've committed some changes to another branch, let's merge it back into master  
 
-    http://i.imgur.com/BAmPmg2.png
+1. Double click on master to check it out
+1. Right click on the last commit of the branch you would like to merge in and select "Merge..."
+1. Click "Ok"
+1. If there are no conflicts, the merge will be successful and master will contain all the changes from the other branch
+1. Remember to push!
 
-2.  Name the branch and press "Create Branch". Branch names can not
+Well, that's pretty much all the basics. There are *many many many* more things you can do with Git, but you can worry about that when you the situation arises.
 
-    contain spaces and are case sensitive
-
-3.  You should now be in your new branch. Any commits you do will commit
-
-    to this branch.
-
-
-
-  
-
-To move to another branch, or "checkout" a branch, simply double click
-
-the branch in your commit history or double click the branch in the
-
-branch list in the left column  
-
-
-
-[![](../images/thumbnails/2014-01-22-getting-started-with-git-39-ikvsVti.png)](../images/2014-01-22-getting-started-with-git-39-ikvsVti.png)
-
-
-
-  
-
-Now that you've committed some changes to another branch, let's merge it
-
-back into master  
-
-  
-
-
-
-1.  Double click on master to check it out
-
-2.  Right click on the last commit of the branch you would like to merge
-
-    in and select "Merge..."
-
-3.  Click "Ok"
-
-4.  If there are no conflicts, the merge will be successful and master
-
-    will contain all the changes from the other branch
-
-5.  Remember to push!
-
-
-
-  
-
-
-
-  
-
-
-
-Well, that's pretty much all the basics. There are *many many many* more
-
-things you can do with Git, but you can worry about that when you the
-
-situation arises. 
-
-
-
-  
-
-
-
-You are more than welcome to leave a comment if you have any questions
-
-or if you have any suggestions for improving what I've written or the
-
-structure of how it's organized. Also, please let me know if you find
-
-any errors.
-
-
-
-  
-
-
+You are more than welcome to leave a comment if you have any questions or if you have any suggestions for improving what I've written or the structure of how it's organized. Also, please let me know if you find any errors.
 
 Have fun coding!
-
-
-
--<span style="color: #dd7700;">RichieSams</span>
-
