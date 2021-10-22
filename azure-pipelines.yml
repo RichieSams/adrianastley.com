@@ -1,0 +1,17 @@
+pool:
+  vmImage: ubuntu-18.04
+
+stages:
+  - stage: Build
+    jobs:
+      - job: build
+        displayName: Build
+        steps:
+          - task: InstallSSHKey@0
+            displayName: "Install SSH Key"
+            inputs:
+              knownHostsEntry: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDk/UA5tzxpA+1tmKJXDKFwo1JaJejfMdQOHnld7gkYa7Lqtwuo3zthEnFhLMOtMAlfGzC9xsfM0sX4aL2T39Bw="
+              sshPublicKey: "$(id_rsa_pub)"
+              sshKeySecureFile: "id_rsa"
+          - bash: make build
+            displayName: Build
