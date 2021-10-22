@@ -2,23 +2,19 @@
 
 ifeq ($(OS),Windows_NT)
 EXT=.exe
-RM_CMD=rmdir /q/s
 export SHELL=cmd
 else
 EXT=
-RM_CMD=rm -rf
 endif
+
+SITEGEN_IMAGE=quay.io/richiesams/sitegen:1.0.0
 
 
 build:
-	./sitegen$(EXT) build -c site_gen_config.yaml
+	docker run --rm -v $(CURDIR):/app -w /app $(SITEGEN_IMAGE) build -c site_gen_config.yaml
 
 serve:
-	./sitegen$(EXT) serve -c site_gen_config.yaml -p 3456
+	docker run --rm -it -v $(CURDIR):/app -w /app -p 3456:3456 $(SITEGEN_IMAGE) serve -c site_gen_config.yaml -p 3456
 
 clean:
-	$(RM_CMD) output
-
-upload:
-	ssh dev@45.56.79.149 rm -rf /dockervols/site-html/*
-	scp -r output/* dev@45.56.79.149:/dockervols/site-html
+	docker run --rm -v $(CURDIR):/app -w /app $(SITEGEN_IMAGE) rm -rf ./output
