@@ -18,7 +18,7 @@ stages:
           - task: InstallSSHKey@0
             displayName: "Install SSH Key"
             inputs:
-              knownHostsEntry: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDk/UA5tzxpA+1tmKJXDKFwo1JaJejfMdQOHnld7gkYa7Lqtwuo3zthEnFhLMOtMAlfGzC9xsfM0sX4aL2T39Bw="
+              knownHostsEntry: "45.56.79.149 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDw1BI13ETIyjIC+2beg/+s6/fH0ciBvBy97GbeZ+Jg6Q8IoIoQTAY1QzgX3VMPR7aIi0KHtTiDdsTuZ9iI6yi0uzF/xVHh+A1YC6n+j2iJymXw2mElv3UfDWxsvCE+dAJBUqXyXr9KlcAxlkxeFvFJTblVqPm635ljmyZzTRckgziRLW+aQnJD6NU1nb8NwVQb6uulWZI1v1WPAFbMjZyyBYfxIO39QmZ6x+s9ruTgfvnMegCNUpDDNRvvM2FKTiPBLZfr3CtamMDLy/N40+wgrQqaevyBM32+vr3GzWhxKAUju8il/fGXgJVpdQWSc2QSQOPsYfF5EzVsO+KQinVmGzrNmb0u4mLDybcjGMAZKE5ETprihgdii4Py+mWpIyd2YuM5wbHUpmrisgXoW05uaJCleTpMrtlK1ndqeZnAayKQJKIJZRs7vVpawZ5CPW8fkK8u+cUKCkU4d5pv3uKS68jdPPqYCUszGEtfudrH/VhYlQuxmxdu5wXdDiJ51eU="
               sshPublicKey: "$(id_rsa_pub)"
               sshKeySecureFile: "id_rsa"
           - bash: make build
