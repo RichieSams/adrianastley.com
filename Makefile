@@ -18,3 +18,6 @@ serve:
 
 clean:
 	docker run --rm -v $(CURDIR):/app -w /app $(SITEGEN_IMAGE) rm -rf ./output
+
+deploy:
+	rsync -a --delete output dev@adrianastley.com:/home/dev/temp
