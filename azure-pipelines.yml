@@ -7,6 +7,14 @@ stages:
       - job: build
         displayName: Build
         steps:
+          - bash: make build
+            displayName: Build
+  - stage: Deploy
+    jobs:
+      - job: build
+        displayName: Deploy
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+        steps:
           - task: InstallSSHKey@0
             displayName: "Install SSH Key"
             inputs:
@@ -15,3 +23,5 @@ stages:
               sshKeySecureFile: "id_rsa"
           - bash: make build
             displayName: Build
+          - bash: ssh dev@45.56.79.149 echo '$(pwd)'
+            displayName: Deploy
