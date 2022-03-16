@@ -22,5 +22,5 @@ clean:
 diff:
 	@rsync -rvnc --delete output/ dev@adrianastley.com:/dockervols/site-html/
 
-deploy:
+deploy: clean build
 	rsync -rvc --delete output/ dev@adrianastley.com:/dockervols/site-html/
