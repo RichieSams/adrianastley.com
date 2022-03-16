@@ -14,10 +14,13 @@ build:
 	docker run --rm -v $(CURDIR):/app -w /app $(SITEGEN_IMAGE) build -c site_gen_config.yaml
 
 serve:
-	docker run --rm -it -v $(CURDIR):/app -w /app -p 3456:3456 $(SITEGEN_IMAGE) serve -c site_gen_config.yaml -p 3456
+	docker run --rm -it -v $(CURDIR):/app -w /app -p 3456:3456 $(SITEGEN_IMAGE) /bin/sh
 
 clean:
 	docker run --rm -v $(CURDIR):/app -w /app $(SITEGEN_IMAGE) rm -rf ./output
 
+diff:
+	@rsync -rvnc --delete output/ dev@adrianastley.com:/dockervols/site-html/
+
 deploy:
-	rsync -a --checksum --delete output/ dev@adrianastley.com:/dockervols/site-html/
+	rsync -rvc --delete output/ dev@adrianastley.com:/dockervols/site-html/
